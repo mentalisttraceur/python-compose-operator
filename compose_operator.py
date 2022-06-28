@@ -4,7 +4,7 @@
 """TODO"""
 
 __all__ = ('composable', 'composable_instances')
-__version__ = '0.0.0'
+__version__ = '0.0.1'
 
 
 from compose import sacompose as _compose
@@ -54,11 +54,6 @@ class composable(_CallableObjectProxy):
     def __reduce_ex__(self, protocol):
         """TODO"""
         return (type(self), (self.__wrapped__,))
-
-    @classmethod
-    def force(cls, other):
-        """TODO"""
-        return cls(_compose(other))
 
 
 class composable_instances(_ObjectProxy):
