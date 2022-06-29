@@ -4,11 +4,10 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 
 
 from compose import sacompose as _compose
-from wrapt import CallableObjectProxy as _CallableObjectProxy
 from wrapt import ObjectProxy as _ObjectProxy
 import reprshed as _reprshed
 
@@ -17,7 +16,7 @@ def _name(obj):
     return type(obj).__name__
 
 
-class composable(_CallableObjectProxy):
+class composable(_ObjectProxy):
     """Make a function composable with the | operator."""
     __slots__ = ()
 
@@ -58,6 +57,10 @@ class composable(_CallableObjectProxy):
             other = other.__wrapped__
         return type(self)(_compose(self.__wrapped__, other))
 
+    def __call__(self, /, *args, **kwargs):
+        """Call the wrapped callable."""
+        return self.__wrapped__(*args, **kwargs)
+
     def __repr__(self):
         """Represent the composable wrapper as an unambiguous string."""
         return _reprshed.pure(self, self.__wrapped__)
@@ -67,7 +70,7 @@ class composable(_CallableObjectProxy):
         return (type(self), (self.__wrapped__,))
 
 
-class composable_constructor(_CallableObjectProxy):
+class composable_constructor(_ObjectProxy):
     """Make a class constructor composable with the | operator."""
     __slots__ = ()
 
@@ -118,6 +121,7 @@ class composable_constructor(_CallableObjectProxy):
             return other | self.__wrapped__
         return composable(self).__ror__(other)
 
+    __call__ = composable.__call__
     __repr__ = composable.__repr__
     __reduce_ex__ = composable.__reduce_ex__
 
