@@ -4,7 +4,7 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 
 from compose import sacompose as _compose
