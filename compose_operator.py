@@ -51,9 +51,13 @@ class composable(_CallableObjectProxy):
         """TODO"""
         return _reprshed.pure(self, self.__wrapped__)
 
-    def __reduce_ex__(self, protocol):
+    def __reduce__(self):
         """TODO"""
         return (type(self), (self.__wrapped__,))
+
+    def __reduce_ex__(self, protocol):
+        """TODO"""
+        return self.__reduce__()
 
 
 class composable_instances(_ObjectProxy):
@@ -71,4 +75,5 @@ class composable_instances(_ObjectProxy):
         return composable(self.__wrapped__(*args, **kwargs))
 
     __repr__ = composable.__repr__
+    __reduce__ = composable.__reduce__
     __reduce_ex__ = composable.__reduce_ex__
