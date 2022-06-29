@@ -4,7 +4,7 @@
 """TODO"""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 
 from compose import sacompose as _compose
@@ -69,13 +69,13 @@ class composable_constructor(_CallableObjectProxy):
     def __or__(self, other):
         """TODO"""
         if isinstance(other, type) and not isinstance(other, composable):
-            return NotImplemented
+            return self.__wrapped__ | other
         return composable(self).__or__(other)
 
     def __ror__(self, other):
         """TODO"""
         if isinstance(other, type) and not isinstance(other, composable):
-            return NotImplemented
+            return other | self.__wrapped__
         return composable(self).__ror__(other)
 
     __repr__ = composable.__repr__
