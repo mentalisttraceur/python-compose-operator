@@ -7,6 +7,3 @@ default:
 clean:
 	rm -rf __pycache__ build *.egg-info dist
 	rm -f *.py[oc] MANIFEST compose_operator.py
-
-test:
-	pytest test.py
