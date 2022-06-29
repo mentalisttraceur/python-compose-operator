@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: 0BSD
 # Copyright 2022 Alexander Kozhevnikov <mentalisttraceur@gmail.com>
 
-"""TODO"""
+"""Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 
 from compose import sacompose as _compose
@@ -18,11 +18,18 @@ def _name(obj):
 
 
 class composable(_CallableObjectProxy):
-    """TODO"""
+    """Make a function composable with the | operator."""
     __slots__ = ()
 
     def __init__(self, function):
-        """TODO"""
+        """Initialize the composable wrapper.
+
+        Arguments:
+            function: Function (or other callable) to make composable.
+
+        Raises:
+            TypeError: If the function is not callable.
+        """
         if isinstance(function, (composable, composable_constructor)):
             function = function.__wrapped__
         if not callable(function):
@@ -30,7 +37,10 @@ class composable(_CallableObjectProxy):
         super().__init__(function)
 
     def __or__(self, other):
-        """TODO"""
+        """Function composition operator overload.
+
+        The composed function is equivalent to other(self(...)).
+        """
         if not callable(other):
             return NotImplemented
         if isinstance(other, (composable, composable_constructor)):
@@ -38,7 +48,10 @@ class composable(_CallableObjectProxy):
         return type(self)(_compose(other, self.__wrapped__))
 
     def __ror__(self, other):
-        """TODO"""
+        """Function composition operator overload.
+
+        The composed function is equivalent to self(other(...)).
+        """
         if not callable(other):
             return NotImplemented
         if isinstance(other, (composable, composable_constructor)):
@@ -46,20 +59,27 @@ class composable(_CallableObjectProxy):
         return type(self)(_compose(self.__wrapped__, other))
 
     def __repr__(self):
-        """TODO"""
+        """Represent the composable wrapper as an unambiguous string."""
         return _reprshed.pure(self, self.__wrapped__)
 
     def __reduce_ex__(self, protocol):
-        """TODO"""
+        """Reduce the composable wrapper for copying or serialization."""
         return (type(self), (self.__wrapped__,))
 
 
 class composable_constructor(_CallableObjectProxy):
-    """TODO"""
+    """Make a class constructor composable with the | operator."""
     __slots__ = ()
 
     def __init__(self, cls):
-        """TODO"""
+        """Initialize the composable wrapper.
+
+        Arguments:
+            cls: Class whose constructor to make composable.
+
+        Raises:
+            TypeError: If cls is not a class.
+        """
         if isinstance(cls, (composable, composable_constructor)):
             cls = cls.__wrapped__
         if not isinstance(cls, type):
@@ -67,13 +87,33 @@ class composable_constructor(_CallableObjectProxy):
         super().__init__(cls)
 
     def __or__(self, other):
-        """TODO"""
+        """Type union or function composition operator overload.
+
+        If the other operand a type (which is not being forced
+        to be composable), this operator falls through to what
+        the wrapped object and the other operand would do. For
+        classes as of Python 3.10, that creates a type union.
+
+        If the other operand is not a type, or is being forced
+        to be composable, this operator creates a composed
+        function which is equivalent to other(self(...)).
+        """
         if isinstance(other, type) and not isinstance(other, composable):
             return self.__wrapped__ | other
         return composable(self).__or__(other)
 
     def __ror__(self, other):
-        """TODO"""
+        """Type union or function composition operator overload.
+
+        If the other operand a type (which is not being forced
+        to be composable), this operator falls through to what
+        the wrapped object and the other operand would do. For
+        classes as of Python 3.10, that creates a type union.
+
+        If the other operand is not a type, or is being forced
+        to be composable, this operator creates a composed
+        function which is equivalent to self(other(...)).
+        """
         if isinstance(other, type) and not isinstance(other, composable):
             return other | self.__wrapped__
         return composable(self).__ror__(other)
@@ -83,17 +123,24 @@ class composable_constructor(_CallableObjectProxy):
 
 
 class composable_instances(_ObjectProxy):
-    """TODO"""
+    """Make callable class instances composable with the | operator."""
     __slots__ = ()
 
     def __init__(self, cls):
-        """TODO"""
+        """Initialize the composable wrapper.
+
+        Arguments:
+            cls: Class whose callable instances to make composable.
+
+        Raises:
+            TypeError: If cls is not a class.
+        """
         if not isinstance(cls, type):
             raise TypeError(_name(self) + '() argument must be a class')
         super().__init__(cls)
 
     def __call__(self, /, *args, **kwargs):
-        """TODO"""
+        """Construct a composable instance of the wrapped class."""
         return composable(self.__wrapped__(*args, **kwargs))
 
     __repr__ = composable.__repr__
