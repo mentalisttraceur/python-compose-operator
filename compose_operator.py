@@ -3,8 +3,8 @@
 
 """TODO"""
 
-__all__ = ('composable', 'composable_instances')
-__version__ = '0.0.1'
+__all__ = ('composable', 'composable_constructor', 'composable_instances')
+__version__ = '0.1.0'
 
 
 from compose import sacompose as _compose
@@ -23,7 +23,7 @@ class composable(_CallableObjectProxy):
 
     def __init__(self, function):
         """TODO"""
-        if isinstance(function, composable):
+        if isinstance(function, (composable, composable_constructor)):
             function = function.__wrapped__
         if not callable(function):
             raise TypeError(_name(self) + '() argument must be callable')
@@ -31,19 +31,17 @@ class composable(_CallableObjectProxy):
 
     def __or__(self, other):
         """TODO"""
-        if (not callable(other)
-        or  (isinstance(other, type) and isinstance(self, type))):
+        if not callable(other):
             return NotImplemented
-        if isinstance(other, composable):
+        if isinstance(other, (composable, composable_constructor)):
             other = other.__wrapped__
         return type(self)(_compose(other, self.__wrapped__))
 
     def __ror__(self, other):
         """TODO"""
-        if (not callable(other)
-        or  (isinstance(other, type) and isinstance(self, type))):
+        if not callable(other):
             return NotImplemented
-        if isinstance(other, composable):
+        if isinstance(other, (composable, composable_constructor)):
             other = other.__wrapped__
         return type(self)(_compose(self.__wrapped__, other))
 
@@ -54,6 +52,35 @@ class composable(_CallableObjectProxy):
     def __reduce_ex__(self, protocol):
         """TODO"""
         return (type(self), (self.__wrapped__,))
+
+
+class composable_constructor(_CallableObjectProxy):
+    """TODO"""
+    __slots__ = ()
+
+    def __init__(self, cls):
+        """TODO"""
+        if isinstance(cls, (composable, composable_constructor)):
+            cls = cls.__wrapped__
+        if not isinstance(cls, type):
+            raise TypeError(_name(self) + '() argument must be a class')
+        super().__init__(cls)
+
+    def __or__(self, other):
+        """TODO"""
+        if isinstance(other, type) and not isinstance(other, composable):
+            return NotImplemented
+        return composable(self).__or__(other)
+
+    def __ror__(self, other):
+        """TODO"""
+        if isinstance(other, type) and not isinstance(other, composable):
+            return NotImplemented
+        return composable(self).__ror__(other)
+
+    __repr__ = composable.__repr__
+    __reduce__ = composable.__reduce__
+    __reduce_ex__ = composable.__reduce_ex__
 
 
 class composable_instances(_ObjectProxy):
