@@ -79,7 +79,6 @@ class composable_constructor(_CallableObjectProxy):
         return composable(self).__ror__(other)
 
     __repr__ = composable.__repr__
-    __reduce__ = composable.__reduce__
     __reduce_ex__ = composable.__reduce_ex__
 
 
