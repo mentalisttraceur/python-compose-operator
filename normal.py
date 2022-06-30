@@ -94,8 +94,8 @@ class composable_constructor(_CallableObjectProxy):
     def __or__(self, other):
         """Type union or function composition operator overload.
 
-        If the other operand a type (which is not being forced
-        to be composable), this operator falls through to what
+        If the other operand is a type, and is not being forced
+        to be composable, this operator falls through to what
         the wrapped object and the other operand would do. For
         classes as of Python 3.10, that creates a type union.
 
@@ -113,8 +113,8 @@ class composable_constructor(_CallableObjectProxy):
     def __ror__(self, other):
         """Type union or function composition operator overload.
 
-        If the other operand a type (which is not being forced
-        to be composable), this operator falls through to what
+        If the other operand is a type, and is not being forced
+        to be composable, this operator falls through to what
         the wrapped object and the other operand would do. For
         classes as of Python 3.10, that creates a type union.
 
