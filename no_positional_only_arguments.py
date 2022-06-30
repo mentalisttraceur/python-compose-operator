@@ -42,9 +42,7 @@ class composable(_ObjectProxy):
         """
         if not callable(other):
             return NotImplemented
-        if isinstance(other, (composable, composable_constructor)):
-            other = other.__wrapped__
-        return type(self)(_compose(other, self.__wrapped__))
+        return type(self)(_compose(other, self))
 
     def __ror__(self, other):
         """Function composition operator overload.
@@ -53,9 +51,7 @@ class composable(_ObjectProxy):
         """
         if not callable(other):
             return NotImplemented
-        if isinstance(other, (composable, composable_constructor)):
-            other = other.__wrapped__
-        return type(self)(_compose(self.__wrapped__, other))
+        return type(self)(_compose(self, other))
 
     def __call__(*args, **kwargs):
         """Call the wrapped callable."""
