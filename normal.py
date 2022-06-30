@@ -4,7 +4,7 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 
 from compose import sacompose as _compose
@@ -132,6 +132,18 @@ class composable_constructor(_CallableObjectProxy):
     __repr__ = composable.__repr__
     __reduce_ex__ = composable.__reduce_ex__
 
+    def __instancecheck__(self, instance):
+        """Check if instance is of the wrapped class."""
+        return isinstance(instance, self.__wrapped__)
+
+    def __subclasscheck__(self, subclass):
+        """Check if subclass is of the wrapped class."""
+        try:
+            subclass = subclass.__wrapped__
+        except AttributeError:
+            pass
+        return issubclass(subclass, self.__wrapped__)
+
 
 class composable_instances(_CallableObjectProxy):
     """Make callable class instances composable with the | operator."""
@@ -156,3 +168,6 @@ class composable_instances(_CallableObjectProxy):
 
     __repr__ = composable.__repr__
     __reduce_ex__ = composable.__reduce_ex__
+
+    __instancecheck__ = composable_constructor.__instancecheck__
+    __subclasscheck__ = composable_constructor.__subclasscheck__
