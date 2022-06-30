@@ -38,7 +38,8 @@ class composable(_ObjectProxy):
     def __or__(self, other):
         """Function composition operator overload.
 
-        The composed function is equivalent to other(self(...)).
+        The composed function is equivalent to other(self(...)),
+        and is itself composable with the | operator.
         """
         if not callable(other):
             return NotImplemented
@@ -47,7 +48,8 @@ class composable(_ObjectProxy):
     def __ror__(self, other):
         """Function composition operator overload.
 
-        The composed function is equivalent to self(other(...)).
+        The composed function is equivalent to self(other(...)),
+        and is itself composable with the | operator.
         """
         if not callable(other):
             return NotImplemented
@@ -98,7 +100,8 @@ class composable_constructor(_ObjectProxy):
 
         If the other operand is not a type, or is being forced
         to be composable, this operator creates a composed
-        function which is equivalent to other(self(...)).
+        function which is equivalent to other(self(...)), and
+        is itself composable with the | operator.
         """
         if isinstance(other, type) and not isinstance(other, composable):
             return self.__wrapped__ | other
@@ -116,7 +119,8 @@ class composable_constructor(_ObjectProxy):
 
         If the other operand is not a type, or is being forced
         to be composable, this operator creates a composed
-        function which is equivalent to self(other(...)).
+        function which is equivalent to self(other(...)), and
+        is itself composable with the | operator.
         """
         if isinstance(other, type) and not isinstance(other, composable):
             return other | self.__wrapped__
