@@ -99,7 +99,9 @@ class composable_constructor(_ObjectProxy):
         """
         if isinstance(other, type) and not isinstance(other, composable):
             return self.__wrapped__ | other
-        return composable(self).__or__(other)
+        if not callable(other):
+            return NotImplemented
+        return composable(_compose(other, self))
 
     def __ror__(self, other):
         """Type union or function composition operator overload.
@@ -115,7 +117,9 @@ class composable_constructor(_ObjectProxy):
         """
         if isinstance(other, type) and not isinstance(other, composable):
             return other | self.__wrapped__
-        return composable(self).__ror__(other)
+        if not callable(other):
+            return NotImplemented
+        return composable(_compose(self, other))
 
     __call__ = composable.__call__
     __repr__ = composable.__repr__
