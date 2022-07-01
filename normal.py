@@ -4,7 +4,7 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 
 
 from compose import sacompose as _compose
@@ -62,6 +62,18 @@ class composable(_CallableObjectProxy):
         if not callable(other):
             return NotImplemented
         return type(self)(_compose(self, other))
+
+    def __get__(self, obj, objtype=None):
+        """Get the composable function as a composable bound method."""
+        wrapped = self.__wrapped__
+        try:
+            bind = type(wrapped).__get__
+        except AttributeError:
+            return self
+        bound_wrapped = bind(wrapped, obj, objtype)
+        if bound_wrapped is wrapped:
+            return self
+        return type(self)(bound_wrapped)
 
     def __repr__(self):
         """Represent the composable wrapper as an unambiguous string."""
