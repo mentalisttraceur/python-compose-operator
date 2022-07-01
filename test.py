@@ -10,6 +10,7 @@ def _composable_eq(self, other):
     return True
 composable.__eq__ = _composable_eq
 
+
 def _sacompose_eq(self, other):
     assert type(self) == type(other)
     assert self.functions == other.functions
@@ -58,19 +59,19 @@ class C:
     ...
 
 
-def test_composable_function_class():
+def test_composable_function_with_class():
     assert h | C == composable(sacompose(C, h))
 
 
-def test_composable_class_function():
+def test_composable_class_with_function():
     assert composable(C) | f == composable(sacompose(f, composable(C)))
 
 
-def test_composable_decorated_function_class():
+def test_composable_decorated_function_with_class():
     assert h | C == composable(sacompose(C, h))
 
 
-def test_class_composable_class():
+def test_class_with_composable_class():
     assert C | composable(C) == composable(sacompose(composable(C), C))
 
 
@@ -83,14 +84,25 @@ def test_composable_constructor_decorate():
     D = composable_constructor(D)
 
 
-def test_I_am_very_tired_TODO():
+def test_composable_constructor_decorated_class_with_function():
     assert D | f == composable(sacompose(f, D))
+
+def test_function_with_composable_constructor_decorated_class():
+    assert f | D == composable(sacompose(D, f))
+
+def test_composable_constructor_decorated_class_with_class():
     assert D | C == typing.Union[D, C]
+
+def test_composable_composable_constructor_decorated_class_with_class():
     assert composable(D) | C == composable(sacompose(C, composable(D)))
+
+def test_composable_constructor_decorated_class_with_composable_class():
     assert D | composable(C) == composable(sacompose(composable(C), D))
-    assert D | f | C == composable(sacompose(C, f, D))
+
+def test_composable_constructor_chain():
     assert f | D | C == composable(sacompose(C, D, f))
 
+def test_I_am_very_tired_TODO():
     @composable_instances
     class F:
         def __eq__(self, other):
