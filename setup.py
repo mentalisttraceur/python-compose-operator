@@ -42,7 +42,7 @@ else:
     path_setup_py_uses = os.path.join(project_directory, 'compose_operator.py')
     if bdist_wheel_tag_check('py38'):
         source_file = 'normal.py'
-    elif bdist_wheel_tag_check('py2.py30'):
+    elif bdist_wheel_tag_check('py30'):
         source_file = 'no_positional_only_arguments.py'
     elif sys.version_info >= (3, 8):
         source_file = 'normal.py'
@@ -73,7 +73,6 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 2',
         'Operating System :: OS Independent',
     ],
     py_modules=['compose_operator'],

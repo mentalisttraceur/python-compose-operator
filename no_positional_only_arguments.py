@@ -47,7 +47,7 @@ class composable(_CallableObjectProxy):
             function = function.__wrapped__
         if not callable(function):
             raise TypeError(_name(self) + '() argument must be callable')
-        super(composable, self).__init__(function)
+        super().__init__(function)
 
     def __or__(self, other):
         """Function composition operator overload.
@@ -121,7 +121,7 @@ class composable_constructor(_CallableObjectProxy):
             cls = cls.__wrapped__
         if not isinstance(cls, type):
             raise TypeError(_name(self) + '() argument must be a class')
-        super(composable_constructor, self).__init__(cls)
+        super().__init__(cls)
 
     def __or__(self, other):
         """Type union or function composition operator overload.
@@ -194,7 +194,7 @@ class composable_instances(_CallableObjectProxy):
         """
         if not isinstance(cls, type):
             raise TypeError(_name(self) + '() argument must be a class')
-        super(composable_instances, self).__init__(cls)
+        super().__init__(cls)
 
     def __call__(*args, **kwargs):
         """Construct a composable instance of the wrapped class."""

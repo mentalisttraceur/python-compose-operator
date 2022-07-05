@@ -1,6 +1,6 @@
 default:
 	python setup.py sdist
-	python setup.py bdist_wheel --python-tag py2.py30
+	python setup.py bdist_wheel --python-tag py30
 	rm build/lib/compose_operator.py
 	python setup.py bdist_wheel --python-tag py38
 
