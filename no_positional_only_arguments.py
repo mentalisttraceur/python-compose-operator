@@ -4,8 +4,10 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 
+
+from copy import deepcopy as _deepcopy
 
 from compose import sacompose as _compose
 from wrapt import CallableObjectProxy as _CallableObjectProxy
@@ -86,6 +88,14 @@ class composable(_CallableObjectProxy):
         """Reduce the wrapper for serialization."""
         return (type(self), (self.__wrapped__,))
 
+    def __copy__(self):
+        """Make a shallow copy of the wrapper."""
+        return type(self)(self.__wrapped__)
+
+    def __deepcopy__(self, memo):
+        """Make a deep copy the wrapper."""
+        return type(self)(_deepcopy(self.__wrapped__, memo))
+
 
 class composable_constructor(_CallableObjectProxy):
     """Make a class constructor composable with the | operator."""
@@ -146,6 +156,8 @@ class composable_constructor(_CallableObjectProxy):
 
     __repr__ = composable.__repr__
     __reduce_ex__ = composable.__reduce_ex__
+    __copy__ = composable.__copy__
+    __deepcopy__ = composable.__deepcopy__
 
     def __instancecheck__(self, instance):
         """Check if instance is of the wrapped class."""
@@ -186,6 +198,8 @@ class composable_instances(_CallableObjectProxy):
 
     __repr__ = composable.__repr__
     __reduce_ex__ = composable.__reduce_ex__
+    __copy__ = composable.__copy__
+    __deepcopy__ = composable.__deepcopy__
 
     __instancecheck__ = composable_constructor.__instancecheck__
     __subclasscheck__ = composable_constructor.__subclasscheck__
