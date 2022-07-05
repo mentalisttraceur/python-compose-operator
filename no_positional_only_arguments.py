@@ -203,6 +203,9 @@ class composable_instances(_CallableObjectProxy):
         self, args = __call__(*args)
         return composable(self.__wrapped__(*args, **kwargs))
 
+    __or__ = composable_constructor.__or__
+    __ror__ = composable_constructor.__ror__
+
     __repr__ = composable.__repr__
     __reduce_ex__ = composable.__reduce_ex__
     __copy__ = composable.__copy__
