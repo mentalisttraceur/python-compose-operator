@@ -4,10 +4,11 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.3.4'
+__version__ = '0.3.5'
 
 
 from copy import deepcopy as _deepcopy
+from inspect import unwrap as _unwrap
 
 from compose import sacompose as _compose
 from wrapt import CallableObjectProxy as _CallableObjectProxy
@@ -94,6 +95,12 @@ class composable(_CallableObjectProxy):
         return type(self)(_deepcopy(self.__wrapped__, memo))
 
 
+def _is_forced_composable(obj):
+    composable_classes = (composable, composable_constructor)
+    obj = _unwrap(obj, stop=lambda obj: isinstance(obj, composable_classes))
+    return isinstance(obj, composable)
+
+
 class composable_constructor(_CallableObjectProxy):
     """Make a class constructor composable with the | operator."""
     __slots__ = ()
@@ -126,7 +133,7 @@ class composable_constructor(_CallableObjectProxy):
         function which is equivalent to other(self(...)), and
         is itself composable with the | operator.
         """
-        if isinstance(other, type) and not isinstance(other, composable):
+        if isinstance(other, type) and not _is_forced_composable(other):
             return self.__wrapped__ | other
         if not callable(other):
             return NotImplemented
@@ -145,7 +152,7 @@ class composable_constructor(_CallableObjectProxy):
         function which is equivalent to self(other(...)), and
         is itself composable with the | operator.
         """
-        if isinstance(other, type) and not isinstance(other, composable):
+        if isinstance(other, type) and not _is_forced_composable(other):
             return other | self.__wrapped__
         if not callable(other):
             return NotImplemented
