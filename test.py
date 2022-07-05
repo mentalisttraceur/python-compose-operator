@@ -130,6 +130,20 @@ def test_I_am_very_tired_TODO():
     assert G | composable(G) == composable(sacompose(composable(G), G))
     assert G() | G() == composable(sacompose(G(), G()))
 
+    @composable_instances
+    @composable_constructor
+    class H:
+        def __eq__(self, other):
+            return type(self) == type(other)
+        def __call__(self, whatever):
+            ...
+
+    assert H | H() == composable(sacompose(H(), H))
+    assert H() | H == composable(sacompose(H, H()))
+    assert H | H == H
+    assert H | composable(H) == composable(sacompose(composable(H), H))
+    assert H() | H() == composable(sacompose(H(), H()))
+
     async def a(whatever):
         ...
 
