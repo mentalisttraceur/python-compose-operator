@@ -32,7 +32,7 @@ class composable(_CallableObjectProxy):
     __slots__ = ()
 
     def __init__(self, function):
-        """Initialize the composable wrapper.
+        """Initialize the composable function wrapper.
 
         Arguments:
             function: Function (or other callable) to make composable.
@@ -67,7 +67,7 @@ class composable(_CallableObjectProxy):
         return type(self)(_compose(self, other))
 
     def __get__(self, obj, objtype=None):
-        """Get the composable function as a composable bound method."""
+        """Get the wrapped function as a composable bound method."""
         wrapped = self.__wrapped__
         try:
             bind = type(wrapped).__get__
@@ -79,11 +79,11 @@ class composable(_CallableObjectProxy):
         return type(self)(bound_wrapped)
 
     def __repr__(self):
-        """Represent the composable wrapper as an unambiguous string."""
+        """Represent the wrapper as an unambiguous string."""
         return _reprshed.pure(self, self.__wrapped__)
 
     def __reduce_ex__(self, protocol):
-        """Reduce the composable wrapper for copying or serialization."""
+        """Reduce the wrapper for serialization."""
         return (type(self), (self.__wrapped__,))
 
 
@@ -92,7 +92,7 @@ class composable_constructor(_CallableObjectProxy):
     __slots__ = ()
 
     def __init__(self, cls):
-        """Initialize the composable wrapper.
+        """Initialize the composable constructor wrapper.
 
         Arguments:
             cls: Class whose constructor to make composable.
@@ -165,7 +165,7 @@ class composable_instances(_CallableObjectProxy):
     __slots__ = ()
 
     def __init__(self, cls):
-        """Initialize the composable wrapper.
+        """Initialize the composable instances wrapper.
 
         Arguments:
             cls: Class whose callable instances to make composable.
