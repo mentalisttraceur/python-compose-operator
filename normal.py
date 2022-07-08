@@ -4,7 +4,7 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.3.5'
+__version__ = '0.4.0'
 
 
 from copy import deepcopy as _deepcopy
@@ -40,7 +40,7 @@ class composable(_CallableObjectProxy):
         Raises:
             TypeError: If the function is not callable.
         """
-        if isinstance(function, (composable, composable_constructor)):
+        if isinstance(function, composable):
             function = function.__wrapped__
         if not callable(function):
             raise TypeError(_name(self) + '() argument must be callable')
@@ -114,7 +114,7 @@ class composable_constructor(_CallableObjectProxy):
         Raises:
             TypeError: If cls is not a class.
         """
-        if isinstance(cls, (composable, composable_constructor)):
+        if isinstance(cls, composable_constructor):
             cls = cls.__wrapped__
         if not isinstance(cls, type):
             raise TypeError(_name(self) + '() argument must be a class')
@@ -189,6 +189,8 @@ class composable_instances(_CallableObjectProxy):
         Raises:
             TypeError: If cls is not a class.
         """
+        if isinstance(cls, composable_instances):
+            cls = cls.__wrapped__
         if not isinstance(cls, type):
             raise TypeError(_name(self) + '() argument must be a class')
         super().__init__(cls)
