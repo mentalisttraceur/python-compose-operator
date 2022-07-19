@@ -87,14 +87,18 @@ def test_composable_constructor_decorate():
 def test_composable_constructor_decorated_class_with_function():
     assert D | f == composable(sacompose(f, D))
 
+
 def test_function_with_composable_constructor_decorated_class():
     assert f | D == composable(sacompose(D, f))
+
 
 def test_composable_constructor_decorated_class_with_class():
     assert D | C == typing.Union[D, C]
 
+
 def test_composable_composable_constructor_decorated_class_with_class():
     assert composable(D) | C == composable(sacompose(C, composable(D)))
+
 
 def test_composable_constructor_decorated_class_with_composable_class():
     assert D | composable(C) == composable(sacompose(composable(C), D))
@@ -102,14 +106,20 @@ def test_composable_constructor_decorated_class_with_composable_class():
 def test_composable_constructor_chain():
     assert f | D | C == composable(sacompose(C, D, f))
 
-def test_I_am_very_tired_TODO():
-    @composable_instances
-    class F:
-        def __eq__(self, other):
-            return type(self) == type(other)
-        def __call__(self, whatever):
-            ...
 
+class F:
+    def __eq__(self, other):
+        return type(self) == type(other)
+    def __call__(self, whatever):
+        ...
+
+
+def test_composable_instances_decorate():
+    global F
+    F = composable_instances(F)
+
+
+def test_I_am_very_tired_TODO():
     assert F() | f == composable(sacompose(f, F()))
     assert C | F() == composable(sacompose(F(), C))
     assert D | F == typing.Union[D, F]
