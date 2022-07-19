@@ -1,3 +1,8 @@
+This project is abandoned. I have deleted it from PyPI. I will
+leave it up on GitHub for some time, but I might delete it one
+day in the future, probably spontaneously with no warning if
+ever. If you want to fork it and run with it, be my guest.
+
 compose-operator
 ================
 
