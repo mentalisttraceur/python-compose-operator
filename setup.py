@@ -4,10 +4,7 @@ import errno
 import os
 import sys
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 from compose_operator import __doc__, __version__
 
