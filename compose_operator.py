@@ -86,6 +86,12 @@ class composable(_CallableObjectProxy):
         """Make a deep copy the wrapper."""
         return type(self)(_deepcopy(self.__wrapped__, memo))
 
+    def __call__(self, /, *args, **kwargs):
+        result = super().__call__(*args, **kwargs)
+        if callable(result):
+            return type(self)(result)
+        return result
+
 
 def _is_forced_composable(obj):
     composable_classes = (composable, composable_constructor)
