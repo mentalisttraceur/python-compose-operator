@@ -15,14 +15,6 @@ from wrapt import CallableObjectProxy as _CallableObjectProxy
 import reprshed as _reprshed
 
 
-try:
-    _CallableObjectProxy(lambda self: None)(self=None)
-except TypeError:
-    class _CallableObjectProxy(_CallableObjectProxy):
-        def __call__(self, /, *args, **kwargs):
-            return self.__wrapped__(*args, **kwargs)
-
-
 def _name(obj):
     return type(obj).__name__
 

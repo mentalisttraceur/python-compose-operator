@@ -38,6 +38,6 @@ setup(
     requires=[
         'compose (>=1.4.8)',
         'reprshed',
-        'wrapt',
+        'wrapt (>=1.15.0)',
     ],
 )
