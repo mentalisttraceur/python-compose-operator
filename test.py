@@ -171,3 +171,13 @@ def test_I_am_very_tired_TODO():
     assert b | f == composable(sacompose(f, b))
     assert C | b == composable(sacompose(b, C))
     assert b | C == composable(sacompose(C, b))
+
+
+def test_composable_sticks_to_callable_return_values():
+    def return_f():
+        return f
+    assert isinstance(composable(return_f)(), composable)
+
+
+def test_composable_does_not_stick_to_uncallable_return_values():
+    assert not isinstance(composable(f)("whatever"), composable)
