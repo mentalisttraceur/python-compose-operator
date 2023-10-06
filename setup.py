@@ -32,6 +32,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     py_modules=['compose_operator'],
+    python_requires=">=3.8",
     requires=[
         'compose (>=1.4.8)',
         'reprshed',
