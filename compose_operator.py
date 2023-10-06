@@ -12,7 +12,6 @@ from inspect import unwrap as _unwrap
 
 from compose import sacompose as _compose
 from wrapt import CallableObjectProxy as _CallableObjectProxy
-import reprshed as _reprshed
 
 
 def _name(obj):
@@ -72,7 +71,7 @@ class composable(_CallableObjectProxy):
 
     def __repr__(self):
         """Represent the wrapper as an unambiguous string."""
-        return _reprshed.pure(self, self.__wrapped__)
+        return f'{_name(self)}({self.__wrapped__!r})'
 
     def __reduce_ex__(self, protocol):
         """Reduce the wrapper for serialization."""

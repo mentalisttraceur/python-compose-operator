@@ -35,7 +35,6 @@ setup(
     python_requires=">=3.8",
     requires=[
         'compose (>=1.4.8)',
-        'reprshed',
         'wrapt (>=1.15.0)',
     ],
 )
