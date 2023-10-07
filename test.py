@@ -4,6 +4,16 @@ from compose import sacompose
 from compose_operator import *
 
 
+# Since the actual composition is provided by the
+# `compose` package, none of these tests check if
+# calling a composition does the right thing - we
+# only need to check that the operator constructs
+# the right composition.
+
+
+# Hack the `==` of `composable` and `sacompose`
+# to make the tests more clear+concise+readable:
+
 def _composable_eq(self, other):
     assert type(self) == type(other)
     assert self.__wrapped__ == other.__wrapped__
@@ -34,14 +44,25 @@ def test_composable_right():
     assert f | composable(g) == composable(sacompose(composable(g), f))
 
 
-def h(whatever):
-    ...
-
-
+# This is kinda hacky: nothing new is tested by this,
+# and it creates a dependency between tests, but
+# putting this definition in a test keeps any errors
+# from happening until after the file is loaded by
+# the test runner.
 def test_composable_decorate():
     global h
-    h = composable(h)
 
+    @composable
+    def h(whatever):
+        ...
+
+
+# What do these two tests verify that wasn't already
+# checked by the above? They would expose any state-
+# -retaining issues, because there is one instance of
+# ``composable`` (the one decorating ``h``) being used
+# repeatedly. And if the prior tests pass but this fails,
+# we've narrowed it down to such state-retaining issues.
 
 def test_composable_decorated_left():
     assert h | f == composable(sacompose(f, h))
@@ -75,56 +96,72 @@ def test_class_with_composable_class():
     assert C | composable(C) == composable(sacompose(composable(C), C))
 
 
-class D:
-    ...
-
-
+# Same "this is kinda hacky" as `test_composable_decorate`:
 def test_composable_constructor_decorate():
     global D
-    D = composable_constructor(D)
+
+    @composable_constructor
+    class D:
+        ...
 
 
-def test_composable_constructor_decorated_class_with_function():
+def test_composable_constructor_with_function():
     assert D | f == composable(sacompose(f, D))
 
 
-def test_function_with_composable_constructor_decorated_class():
+def test_function_with_composable_constructor():
     assert f | D == composable(sacompose(D, f))
 
 
-def test_composable_constructor_decorated_class_with_class():
+def test_composable_constructor_with_class():
     assert D | C == typing.Union[D, C]
 
+def test_composable_constructor_with_itself():
+    assert D | D == D
 
-def test_composable_composable_constructor_decorated_class_with_class():
+
+def test_composable_composable_constructor_with_class():
     assert composable(D) | C == composable(sacompose(C, composable(D)))
 
 
-def test_composable_constructor_decorated_class_with_composable_class():
+def test_composable_constructor_with_composable_class():
     assert D | composable(C) == composable(sacompose(composable(C), D))
 
 def test_composable_constructor_chain():
     assert f | D | C == composable(sacompose(C, D, f))
 
 
-class F:
-    def __eq__(self, other):
-        return type(self) == type(other)
-    def __call__(self, whatever):
-        ...
-
-
+# Same "this is kinda hacky" as `test_composable_decorate`:
 def test_composable_instances_decorate():
     global F
-    F = composable_instances(F)
+
+    @composable_instances
+    class F:
+        def __eq__(self, other):
+            return type(self) == type(other)
+        def __call__(self, whatever):
+            ...
 
 
-def test_I_am_very_tired_TODO():
+def test_composable_instance_with_function():
     assert F() | f == composable(sacompose(f, F()))
+
+def test_class_with_composable_instance():
     assert C | F() == composable(sacompose(F(), C))
+
+def test_composable_constructor_with_composable_instances():
     assert D | F == typing.Union[D, F]
+
+def test_composable_constructor_with_composable_instance():
     assert D | F() == composable(sacompose(F(), D))
+
+def test_composable_constructor_with_composable_composable_instances():
     assert D | composable(F) == composable(sacompose(composable(F), D))
+
+
+# Same "this is kinda hacky" as `test_composable_decorate`:
+def test_composable_instances_constructor_decorate():
+    global G
 
     @composable_constructor
     @composable_instances
@@ -134,12 +171,34 @@ def test_I_am_very_tired_TODO():
         def __call__(self, whatever):
             ...
 
+def test_composable_instances_constructor_with_its_instance():
     assert G | G() == composable(sacompose(G(), G))
+
+def test_composable_instances_constructor_instance_with_its_constructor():
     assert G() | G == composable(sacompose(G, G()))
+
+def test_composable_instances_constructor_with_class():
+    assert G | C == typing.Union[G, C]
+
+def test_composable_instances_constructor_with_composable_constructor():
+    assert G | D == typing.Union[G, D]
+
+def test_composable_instances_constructor_with_composable_instances():
+    assert G | F == typing.Union[G, F]
+
+def test_composable_constructor_and_instances_with_itself():
     assert G | G == G
+
+def test_composable_instance_constructor_with_composable_itself():
     assert G | composable(G) == composable(sacompose(composable(G), G))
+
+def test_composable_instance_constructor_instance_with_itself():
     assert G() | G() == composable(sacompose(G(), G()))
 
+
+# This is basically overkill, but order-independence matters,
+# so as a compromize, shove it all in one test.
+def test_composable_instances_constructor_order_independence():
     @composable_instances
     @composable_constructor
     class H:
@@ -150,14 +209,29 @@ def test_I_am_very_tired_TODO():
 
     assert H | H() == composable(sacompose(H(), H))
     assert H() | H == composable(sacompose(H, H()))
+    assert H | C == typing.Union[H, C]
+    assert H | D == typing.Union[H, D]
+    assert H | F == typing.Union[H, F]
+    assert H | G == typing.Union[H, G]
     assert H | H == H
     assert H | composable(H) == composable(sacompose(composable(H), H))
     assert H() | H() == composable(sacompose(H(), H()))
 
+
+# Check composing ``async`` functions doesn't break making
+# the compositions (the current implementation does not
+# need to do anything different for ``async`` since that's
+# automatically handled by ``sacompose``, but these tests
+# would catch changes in `compose.sacompose` that require
+# a change in this code, and changes in this code that
+# don't realize they're breaking this). It's probably too
+# low-value to retest literally every permutation of the
+# above just with async functions swapped in, so I just
+# threw some of the base cases in here:
+def test_async():
     async def a(whatever):
         ...
 
-    # Everything below needs an await, unlike any of the above:
     assert h | a == composable(sacompose(a, h))
     assert a | h == composable(sacompose(h, a))
     assert D | a == composable(sacompose(a, D))
@@ -167,10 +241,23 @@ def test_I_am_very_tired_TODO():
     async def b(whatever):
         ...
 
-    assert f | b == composable(sacompose(b, f))
-    assert b | f == composable(sacompose(f, b))
+    assert a | b == composable(sacompose(b, a))
+    assert b | a == composable(sacompose(a, b))
     assert C | b == composable(sacompose(b, C))
     assert b | C == composable(sacompose(C, b))
+
+    @composable_instances
+    class A:
+        def __eq__(self, other):
+            return type(self) == type(other)
+        async def __call__(self, whatever):
+            ...
+
+    assert A() | f == composable(sacompose(f, A()))
+    assert C | A() == composable(sacompose(A(), C))
+    assert D | A == typing.Union[D, A]
+    assert D | A() == composable(sacompose(A(), D))
+    assert D | composable(A) == composable(sacompose(composable(A), D))
 
 
 def test_composable_sticks_to_callable_return_values():
