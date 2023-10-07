@@ -119,14 +119,6 @@ for **type unions** still works:
     >>> (operator.add | MyClass)(3, 2)
     MyClass(x=5)
 
-You can also use this to wrap existing classes:
-
-.. code:: python
-
-    >>> int_ = composable_constructor(int)
-    >>> (int_ | (lambda x: x + 2))(4.2)
-    6
-
 ``composable`` takes precedence over
 ``composable_constructor``, so you can
 still force ``|`` to do composition
@@ -134,10 +126,10 @@ instead of type union if you need to:
 
 .. code:: python
 
-    >>> (composable(int) | MyClass)("7")
+    >>> (composable(int) | MyClass)("6")
+    MyClass(x=6)
+    >>> (int | composable(MyClass))("7")
     MyClass(x=7)
-    >>> (int | composable(MyClass))("8")
-    MyClass(x=8)
 
 
 Composable Callable Objects
