@@ -8,3 +8,4 @@ clean:
 
 test:
 	pytest test.py
+	PYTHONPATH=. pytest README.rst

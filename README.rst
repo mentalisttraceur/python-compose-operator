@@ -62,7 +62,7 @@ You can also use ``composable`` as a decorator:
 
     >>> @composable
     ... def foo(qux):
-    ...     qux + 42
+    ...     return qux + 42
     ... 
     >>> (foo | float | str)(8)
     '50.0'
@@ -106,7 +106,7 @@ for **type unions** still works:
     >>> from dataclasses import dataclass
     >>> 
     >>> @composable_constructor
-    >>> @dataclass
+    ... @dataclass
     ... class MyClass:
     ...     x: int
     ... 
