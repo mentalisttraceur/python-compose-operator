@@ -153,28 +153,6 @@ them to compose with ``composable``:
     >>> (int | composable(MyClass))("8")
     MyClass(x=8)
 
-.. tip::
-
-   If you ever have to deal with a class that someone wrapped
-   with ``composable``, you can get at the actual class with
-   ``inspect.unwrap``:
-
-    .. code:: python
-
-        >>> import inspect
-        >>> 
-        >>> @composable
-        ... class Bad:
-        ...     ...
-        ... 
-        >>> isinstance(0, int | Bad)
-        Traceback (most recent call last):
-          File "<stdin>", line 1, in <module>
-        TypeError: isinstance() arg 2 must be a type, a tuple of types, or a union
-        >>> Bad = inspect.unwrap(Bad, stop=lambda obj: isinstance(obj, type))
-        >>> isinstance(0, int | Bad)
-        True
-
 
 Composable Callable Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
