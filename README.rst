@@ -71,9 +71,9 @@ You can also use ``composable`` as a decorator:
 ``composable`` is "sticky"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``composable`` will stick to callable return values,
-so it **works out-of-the-box** with implementations
-of currying, partial application, and so on:
+``composable`` will stick to callable return
+values, so it **works out-of-the-box with
+currying**, partial application, and so on:
 
 .. code:: python
 
