@@ -127,10 +127,10 @@ You can also use this to wrap existing classes:
     >>> (int_ | (lambda x: x + 2))(4.2)
     6
 
-Of course, when you need two classes to compose,
-even if you've wrapped one or both of them with
-``composable_constructor``, you can still force
-them to compose with ``composable``:
+When you need two classes to compose, even if
+you've wrapped one or both of them with
+``composable_constructor``, you can still
+force them to compose with ``composable``:
 
 .. code:: python
 
