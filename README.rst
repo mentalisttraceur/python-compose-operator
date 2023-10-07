@@ -1,29 +1,25 @@
-This project is abandoned. I have deleted it from PyPI. I will
-leave it up on GitHub for some time, but I might delete it one
-day in the future, probably spontaneously with no warning if
-ever. If you want to fork it and run with it, be my guest.
-
 compose-operator
 ================
 
 This module allows adding function composition with the ``|``
 operator to any function, method, class, or other callable.
 
-Great care is taken to ensure that
+|compose|_ is used for the function composition.
+|wrapt|_ is used to add the operator as transparently
+and unintrusively as possible. This ensures that:
 
-1. adding the ``|`` operator does not interfere with any other
-   functionality, such as other operators, type checks, type and that
-``|``-composed results behave as much as possible like a
-normal function, including signature introspection, method
-binding behavior, pickling, and so on. In particular,
-|wrapt|_ is used to provide a wrapper that unintrusively and
-transparently adds the ``|`` operator overload, and |compose|_
-is used for the actual function composition implementation.
+1. The ``|`` composition operator does not interfere with any
+   other functionality, such as other operators, type checks,
+   and (optionally) Python 3.10's ``|`` type union operator.
 
-.. |wrapt| replace:: ``wrapt``
-.. _wrapt: https://pypi.org/project/wrapt
+2. ``|``-composed functions behave as much as possible like a
+   normal function, including signature introspection, method
+   binding behavior, pickling, and so on.
+
 .. |compose| replace:: ``compose``
 .. _compose: https://pypi.org/project/compose
+.. |wrapt| replace:: ``wrapt``
+.. _wrapt: https://pypi.org/project/wrapt
 
 
 Versioning
@@ -69,13 +65,137 @@ Either side of the operation can be marked composable:
     >>> stringify_as_integer(12.3)
     '12'
 
+Of course, you can use ``composable`` as a decorator:
+
+.. code:: python
+
+    >>> @composable
+    ... def foo(qux):
+    ...     qux + 42
+    ... 
+    >>> (foo | str)(8)
+    '50'
+
+
+``composable`` is "sticky"
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Of course, ``composable`` "sticks" to the
+result of ``|``, so we can chain ``|``:
+
+.. code:: python
+
+    >>> (composable(str) | int | float)(42)
+    42.0
+
+``composable`` will also stick to return values that
+are callable, so **it combines out-of-the-box** with
+currying, partial application, and so on:
+
+.. code:: python
+
+    >>> import functools
+    >>> import operator
+    >>> import toolz
+    >>> 
+    >>> partial = composable(functools.partial)
+    >>> add1 = partial(operator.add, 1)
+    >>> (add1 | str)(2)
+    '3'
+    >>> curry = composable(toolz.curry)
+    >>> add = curry(operator.add)
+    >>> (add(2) | float)(2)
+    4.0
 
 
 Composable Classes
 ~~~~~~~~~~~~~~~~~~
 
-Classes can be composable in two ways:
+If you want to decorate a class so that the class
+is composable, use ``@composable_constructor`` -
+that way, normal class functionality such as ``|``
+for **type unions** still works:
 
-1. the class *instances* can be callable, typically by having the class
-   define the ``__call__`` method.
+.. code:: python
 
+    >>> from compose_operator import composable_constructor
+    >>> from dataclasses import dataclass
+    >>> 
+    >>> @composable_constructor
+    >>> @dataclass
+    ... class MyClass:
+    ...     x: int
+    ... 
+    >>> isinstance(1, int | MyClass)
+    True
+    >>> isinstance("hello!", int | MyClass)
+    False
+    >>> isinstance(MyClass(0), int | MyClass)
+    True
+    >>> (operator.add | MyClass)(3, 2)
+    MyClass(x=5)
+
+You can also use this to wrap existing classes:
+
+    >>> int_ = composable_constructor(int)
+    >>> (int_ | (lambda x: x + 2))(4.2)
+    6
+
+Of course, when you need two classes to compose,
+even if you've wrapped one or both of them with
+``composable_constructor``, you can still force
+them to compose with ``composable``:
+
+.. code:: python
+
+    >>> (composable(int) | MyClass)("7")
+    MyClass(x=7)
+    >>> (int | composable(MyClass))("8")
+    MyClass(x=8)
+
+.. tip::
+
+   If you ever have to deal with a class that someone wrapped
+   with ``composable``, you can get at the actual class with
+   ``inspect.unwrap``:
+
+    .. code:: python
+
+        >>> import inspect
+        >>> 
+        >>> @composable
+        ... class Bad:
+        ...     ...
+        ... 
+        >>> isinstance(0, int | Bad)
+        Traceback (most recent call last):
+          File "<stdin>", line 1, in <module>
+        TypeError: isinstance() arg 2 must be a type, a tuple of types, or a union
+        >>> Bad = inspect.unwrap(Bad, stop=lambda obj: isinstance(obj, type))
+        >>> isinstance(0, int | Bad)
+        True
+
+
+Composable Callable Objects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are defining a class with a ``__call__`` method,
+you can make its instances automatically ``composable``
+by using ``composable_instances``:
+
+.. code:: python
+
+    >>> from compose_operator import composable_instances
+    >>> 
+    >>> @composable_instances
+    ... class Greeter:
+    ...     def __init__(self, target):
+    ...         self._target = target
+    ...     def __call__(self):
+    ...         return f"Hello, {self._target}!"
+    ... 
+    >>> world_greeter = Greeter("world")
+    >>> world_greeter()
+    'Hello, world!'
+    >>> (world_greeter | list)()
+    ['H', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd', '!']
