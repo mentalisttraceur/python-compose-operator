@@ -27,7 +27,7 @@ setup(
     author='Alexander Kozhevnikov',
     author_email='mentalisttraceur@gmail.com',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],

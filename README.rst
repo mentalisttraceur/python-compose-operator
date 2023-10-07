@@ -118,6 +118,7 @@ for **type unions** still works:
 .. code:: python
 
     >>> from compose_operator import composable_constructor
+    >>> 
     >>> from dataclasses import dataclass
     >>> 
     >>> @composable_constructor
