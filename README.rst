@@ -121,6 +121,8 @@ for **type unions** still works:
 
 You can also use this to wrap existing classes:
 
+.. code:: python
+
     >>> int_ = composable_constructor(int)
     >>> (int_ | (lambda x: x + 2))(4.2)
     6
