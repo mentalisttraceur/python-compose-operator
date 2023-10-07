@@ -127,8 +127,10 @@ You can also use this to wrap existing classes:
     >>> (int_ | (lambda x: x + 2))(4.2)
     6
 
-``composable_constructor`` doesn't get in the way of
-explicitly composing two classes with ``composable``:
+``composable`` takes precedence over
+``composable_constructor``, so you can
+still force ``|`` to do composition
+instead of type union if you need to:
 
 .. code:: python
 
