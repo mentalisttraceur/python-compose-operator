@@ -4,7 +4,7 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 
 from copy import deepcopy as _deepcopy
