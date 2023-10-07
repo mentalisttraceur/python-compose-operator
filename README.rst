@@ -56,14 +56,6 @@ A simple inline composition:
     >>> stringify_as_integer(12.3)
     '12'
 
-Either side of the operation can be marked composable:
-
-.. code:: python
-
-    >>> stringify_as_integer = int | composable(str)
-    >>> stringify_as_integer(12.3)
-    '12'
-
 Of course, you can use ``composable`` as a decorator:
 
 .. code:: python
@@ -79,17 +71,9 @@ Of course, you can use ``composable`` as a decorator:
 ``composable`` is "sticky"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Of course, ``composable`` "sticks" to the
-result of ``|``, so we can chain ``|``:
-
-.. code:: python
-
-    >>> (composable(str) | int | float)(42)
-    42.0
-
-``composable`` will also stick to return values that
-are callable, so **it combines out-of-the-box** with
-currying, partial application, and so on:
+``composable`` will stick to callable return values.
+so it **works out-of-the-box** with implementations
+of currying, partial application, and so on:
 
 .. code:: python
 
