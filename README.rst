@@ -9,8 +9,8 @@ operator to any function, method, class, or other callable.
 and unintrusively as possible. This ensures that:
 
 1. The ``|`` composition operator does not interfere with any
-   other functionality, such as other operators, type checks,
-   and (optionally) Python 3.10's ``|`` type union operator.
+   introspection, other operators, type checks, and
+   (optionally) Python 3.10's ``|`` type union operator.
 
 2. ``|``-composed functions still work with signature
    introspection, method binding, pickling, and so on.
