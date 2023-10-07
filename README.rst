@@ -64,8 +64,8 @@ You can also use ``composable`` as a decorator:
     ... def foo(qux):
     ...     qux + 42
     ... 
-    >>> (foo | str)(8)
-    '50'
+    >>> (foo | float | str)(8)
+    '50.0'
 
 
 ``composable`` is "sticky"
