@@ -8,8 +8,8 @@ operator to any function, method, class, or other callable.
 |wrapt|_ is used to add the operator as transparently
 and unintrusively as possible. This ensures that:
 
-1. The ``|`` composition operator does not interfere with any
-   introspection, other operators, type checks, and
+1. The ``|`` composition operator does not interfere at
+   runtime with any introspection, other operators, and
    (optionally) Python 3.10's ``|`` type union operator.
 
 2. ``|``-composed functions still work with signature
