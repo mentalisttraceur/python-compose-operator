@@ -12,9 +12,8 @@ and unintrusively as possible. This ensures that:
    other functionality, such as other operators, type checks,
    and (optionally) Python 3.10's ``|`` type union operator.
 
-2. ``|``-composed functions behave as much as possible like a
-   normal function, including signature introspection, method
-   binding behavior, pickling, and so on.
+2. ``|``-composed functions still work with signature
+   introspection, method binding, pickling, and so on.
 
 .. |compose| replace:: ``compose``
 .. _compose: https://pypi.org/project/compose
