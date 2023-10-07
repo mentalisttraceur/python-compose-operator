@@ -56,7 +56,7 @@ A simple inline composition:
     >>> stringify_as_integer(12.3)
     '12'
 
-Of course, you can use ``composable`` as a decorator:
+You can also use ``composable`` as a decorator:
 
 .. code:: python
 
@@ -127,10 +127,8 @@ You can also use this to wrap existing classes:
     >>> (int_ | (lambda x: x + 2))(4.2)
     6
 
-When you need two classes to compose, even if
-you've wrapped one or both of them with
-``composable_constructor``, you can still
-force them to compose with ``composable``:
+``composable_constructor`` still allows composing
+two classes with an explicit ``composable``:
 
 .. code:: python
 
