@@ -4,7 +4,7 @@
 """Operator overload for function composition."""
 
 __all__ = ('composable', 'composable_constructor', 'composable_instances')
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 from copy import deepcopy as _deepcopy
@@ -86,6 +86,11 @@ class composable(_CallableObjectProxy):
         return type(self)(_deepcopy(self.__wrapped__, memo))
 
     def __call__(self, /, *args, **kwargs):
+        """Call the wrapped callable.
+
+        If the return value is callable, it is made composable
+        by wrapping it with the same wrapper type as this one.
+        """
         result = super().__call__(*args, **kwargs)
         if callable(result):
             return type(self)(result)
