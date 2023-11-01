@@ -56,16 +56,25 @@ A simple inline composition:
     >>> stringify_as_integer(12.3)
     '12'
 
+Naturally, the result of ``|`` on a composable
+function is also composable, so you can chain it:
+
+.. code:: python
+
+    >>> (composable(int) | str | list)(12.3)
+    ['1', '2']
+
 You can also use ``composable`` as a decorator:
 
 .. code:: python
 
     >>> @composable
-    ... def foo(qux):
-    ...     return qux + 42
+    ... def my_stringify(thing):
+    ...     return f'hello {thing}'
     ... 
-    >>> (foo | float | str)(8)
-    '50.0'
+    >>> stringify_as_integer = int | my_stringify
+    >>> stringify_as_integer(12.3)
+    'hello 12'
 
 
 ``composable`` is "sticky"
@@ -89,6 +98,24 @@ currying**, partial application, and so on:
     >>> add = curry(operator.add)
     >>> (add(2) | float)(2)
     4.0
+
+``composable`` also sticks to the results of
+method binding, so if you make a composable
+method, it "just works" as you'd expect:
+
+.. code:: python
+
+    >>> class Adder:
+    ...     def __init__(self, value):
+    ...         self._value = value
+    ... 
+    ...     @composable
+    ...     def add(self, thing):
+    ...         return thing + self._value
+    ... 
+    >>> adder = Adder(42)
+    >>> (adder.add | str)(8)
+    '50'
 
 
 Composable Classes
