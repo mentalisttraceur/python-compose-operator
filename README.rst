@@ -101,7 +101,8 @@ currying**, partial application, and so on:
 
 ``composable`` also sticks to the results of
 method binding, so if you make a composable
-method, it "just works" as you'd expect:
+method, or assign a function composed with
+the ``|`` operator as a method, it "just works":
 
 .. code:: python
 
@@ -113,9 +114,13 @@ method, it "just works" as you'd expect:
     ...     def add(self, thing):
     ...         return thing + self._value
     ... 
+    ...     add_then_stringify = add | str
+    ... 
     >>> adder = Adder(42)
     >>> (adder.add | str)(8)
     '50'
+    >>> adder.add_then_stringify(9)
+    '51'
 
 
 Composable Classes
