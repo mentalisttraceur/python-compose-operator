@@ -11,11 +11,8 @@ from compose_operator import __doc__, __version__
 project_directory = os.path.abspath(os.path.dirname(__file__))
 readme_path = os.path.join(project_directory, 'README.rst')
 
-readme_file = open(readme_path)
-try:
+with open(readme_path) as readme_file:
     long_description = readme_file.read()
-finally:
-    readme_file.close()
 
 setup(
     name='compose-operator',
