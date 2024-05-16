@@ -19,6 +19,7 @@ setup(
     version=__version__,
     description=__doc__.split('\n')[0],
     long_description=long_description,
+    long_description_content_type='text/markdown',
     license='0BSD',
     url='https://github.com/mentalisttraceur/python-compose-operator',
     author='Alexander Kozhevnikov',

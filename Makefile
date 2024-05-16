@@ -8,4 +8,4 @@ clean:
 
 test:
 	pytest test.py
-	PYTHONPATH=. pytest README.rst
+	PYTHONPATH=. pytest --doctest-glob='*.md' README.md
